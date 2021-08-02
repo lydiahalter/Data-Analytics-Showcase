@@ -2,7 +2,7 @@
 
 This repository includes three different projects and my resume.
 
-## 2019 Pennsylvania Census Analysis: Internet and Broadband
+## [2019 Pennsylvania Census Analysis: Internet and Broadband](https://github.com/lydiahalter/Data-Analytics-Showcase/blob/main/income_and_broadband.xlsx)
 
 I created this project on my own to discover how income level affects a person's access to the internet. To come to my conclusions, I did the following:
 1. Searched for lastest available census data that contained the data I needed. Found this data in the United States Census Bureau's [2019 American Community Survey (ACS)](https://data.census.gov/mdat/#/search?ds=ACSPUMS1Y2019&vv=WKHP,GRPIP,*HINCP&cv=HISPEED,ACCESS&rv=ucgid,WIF,MAR&wt=WGTP&g=0400000US42).
@@ -13,6 +13,6 @@ I created this project on my own to discover how income level affects a person's
 6. Filtered the data as necessary to remove any records that would have skewed the results.
 7. Created presentation of results (tables and charts) in new sheet.
 
-## Physics Lab Example
+## [Physics Lab Example](https://github.com/lydiahalter/Data-Analytics-Showcase/blob/main/physics%20lab%20example.pdf)
 
-## Computer Information Systems - Slideshow Presentation
+## [Computer Information Systems - Slideshow Presentation](https://github.com/lydiahalter/Data-Analytics-Showcase/blob/main/Big%20Data%20in%20Education.pdf)

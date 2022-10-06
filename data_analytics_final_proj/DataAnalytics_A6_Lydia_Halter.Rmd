@@ -1,0 +1,217 @@
+---
+title: "Data Analytics - Term Project"
+author: "Lydia Halter"
+output: html_notebook
+---
+
+
+
+```{r}
+#reading in all data
+
+#bulimia across countries
+bul <- read.csv('bulimia.csv')
+bul <- as.data.frame(bul)
+
+#covid data
+covid <- read.csv('covid_stats.csv')
+covid <- t(covid)
+colnames(covid) <- covid[1,]
+covid <- covid[-1, ]
+covid <- as.data.frame(covid)
+
+```
+
+```{r}
+#EDA
+
+#boxplots, 2 per quarter
+
+#q1
+boxplot(bul$Peru, main='Figure1')
+boxplot(bul$Bulgaria, main='Figure2')
+#q2
+boxplot(bul$Spain, main='Figure3')
+boxplot(bul$Portugal, main='Figure4')
+#q3
+boxplot(bul$Canada, main='Figure5')
+boxplot(bul$Denmark, main='Figure6')
+#q4
+boxplot(bul$Tajikistan, main='Figure7')
+boxplot(bul$China, main='Figure8')
+
+#histograms
+
+#first world
+hist(bul$USA, main='Figure9')
+hist(bul$Canada, main='Figure10')
+#second world
+hist(bul$Bulgaria, main='Figure11')
+hist(bul$Hungary, main='Figure12')
+#third world
+hist(bul$Tunisia, main='Figure13')
+hist(bul$Jamaica, main='Figure14')
+
+```
+
+```{r}
+pre.df <- bul[c(130:142),c(2:128)]
+post.df <- bul[c(150:196),c(2:128)]
+bul_diff <- colMeans(post.df) - colMeans(pre.df)
+
+```
+
+```{r}
+bul_pre <- colMeans(pre.df)
+bul_post <- colMeans(post.df)
+
+means <- data.frame(bul_pre = bul_pre, bul_post = bul_post)
+```
+
+```{r}
+library(ggplot2)
+
+lm_eqn <- function(df){
+    m <- lm(bul_pre ~ bul_post, df);
+    eq <- substitute(italic(y) == a * italic(x) + b *","~~italic(r)^2~"="~r2, 
+         list(b = format(unname(coef(m)[1]), digits = 2),
+              a = format(unname(coef(m)[2]), digits = 2),
+             r2 = format(summary(m)$r.squared, digits = 3)))
+    as.character(as.expression(eq));
+}
+
+#Figure15
+ggplot(means, aes(x=bul_pre, y=bul_post)) + 
+  geom_point() +
+  geom_smooth(method=lm, se=FALSE) +
+  geom_text(x = 10, y = 50, label = lm_eqn(means), parse = TRUE)
+
+```
+
+```{r}
+alc <- read.csv('alc_by_country.csv')
+
+alc_pre.df <- alc[c(130:142),c(2:128)]
+alc_post.df <- alc[c(143:155),c(2:128)]
+
+alc_pre <- colMeans(alc_pre.df)
+alc_post <- colMeans(alc_post.df)
+
+alc_means <- data.frame(alc_pre = alc_pre, alc_post = alc_post)
+```
+
+```{r}
+alc_lm_eqn <- function(df){
+    m <- lm(alc_pre ~ alc_post, df);
+    eq <- substitute(italic(y) == a * italic(x) + b *","~~italic(r)^2~"="~r2, 
+         list(b = format(unname(coef(m)[1]), digits = 2),
+              a = format(unname(coef(m)[2]), digits = 2),
+             r2 = format(summary(m)$r.squared, digits = 3)))
+    as.character(as.expression(eq));
+}
+
+#Figure16
+ggplot(alc_means, aes(x=alc_pre, y=alc_post)) + 
+  geom_point() +
+  geom_smooth(method=lm, se=FALSE) +
+  geom_text(x = 20, y = 65, label = alc_lm_eqn(means), parse = TRUE)
+
+
+```
+
+```{r}
+alc_diff <- colMeans(alc_post.df) - colMeans(alc_pre.df)
+alc_diff.df <- data.frame(alc_diff = alc_diff, country = c(1:127))
+
+#Figure17
+ggplot(alc_diff.df, aes(x=country, y=alc_diff)) + geom_point() + ylim(-5, 50)
+```
+
+```{r}
+countries <- colnames(alc)
+countries <- countries[2:128]
+region <- as.data.frame(countries)
+
+gen <- read.csv('gen2.csv')
+rownames(gen) <- countries
+
+```
+
+```{r}
+my.pca <- prcomp(gen,retx=TRUE)
+plot(my.pca, type="line", main='Figure18')
+summary(my.pca)
+```
+
+```{r}
+set.seed(50)
+
+km.2 <- kmeans(gen, centers = 2)
+
+clusterA.df <- as.data.frame(km.2$cluster==1)
+
+clusterA_names <- rownames(clusterA.df)
+rownames(clusterA.df) <- NULL
+clusterA_data <- cbind(clusterA_names,clusterA.df)
+c1 <- clusterA_data[41:127,1]
+c2 <- clusterA_data[1:40,1]
+
+```
+
+```{r}
+install.packages("tidyverse")
+install.packages("highcharter")
+install.packages("dplyr")
+install.packages("maps")
+library(ggplot2)
+library(tidyverse)
+```
+
+```{r}
+library(ggplot2)
+library(maps)
+library(mapdata)
+library(leaflet)
+library(tidyverse)
+library(ggmap)
+library(mapproj)
+
+#c1_data$c1_names
+
+w <- map_data('world')
+gen_map <- map_data('world',
+                region = clusterA_data$clusterA_names)
+
+c1_map <- map_data('world',
+                region = c1)
+c2_map <- map_data('world',
+                region = c2)
+
+all.m <- ggplot(gen_map, aes(x=long, y=lat, group=group)) +
+  geom_polygon(color='black')
+
+c1.m <- ggplot(c1_map, aes(x=long, y=lat, group=group)) +
+  geom_polygon(color='red')
+
+c2.m <- ggplot(c2_map, aes(x=long, y=lat, group=group)) +
+  geom_polygon(color='blue')
+
+
+
+```
+
+```{r}
+#Figure19
+all.m #global map, no specific countries pointed out
+
+#Figure20
+c1.m #global map highlighting cluster 1 countries
+
+#Figure21
+c2.m #global map highlighting cluster 2 countries
+```
+
+
+
+
+

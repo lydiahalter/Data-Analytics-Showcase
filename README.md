@@ -1,12 +1,14 @@
 # Data-Analytics-Showcase
 
-This repository includes several different projects and my resume.
+This repository includes several different projects/example works and my resume.
 
-The projects are:
+This includes:
 
 * SWOT Clock Research
 * Data Analytics Final Project
-* Intro to Data Math Example
+* Intro to Data Math
+	* Example Lab
+	* Final Project (feature selection included)
 * "Bagging and Boosting" Examples
 * 2019 Pennsylvania Census Analysis: Internet and Broadband
 * Physics Lab Example
